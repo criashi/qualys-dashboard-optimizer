@@ -1,69 +1,169 @@
-# Welcome to your Lovable project
+# QualysOps Dashboard
 
-## Project info
+A React-based dashboard application for monitoring Qualys scans across Continental Tire locations. Built with Vite, TypeScript, React, shadcn-ui, and Tailwind CSS.
 
-**URL**: https://lovable.dev/projects/27bebb3f-8792-42cc-8302-05b63adfcc88
+## Features
 
-## How can I edit this code?
+- Real-time scan monitoring across multiple locations
+- Dark/Light mode support
+- Continental Tire brand-compliant UI
+- Responsive design for all devices
+- Interactive data visualization
 
-There are several ways of editing your application.
+## Prerequisites
 
-**Use Lovable**
+- Node.js 18.x or later
+- npm 9.x or later
+- Azure subscription
+- Azure CLI installed
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/27bebb3f-8792-42cc-8302-05b63adfcc88) and start prompting.
+## Local Development
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd qualysops-dashboard
+```
 
-**Use your preferred IDE**
+2. Install dependencies:
+```bash
+npm install
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Building for Production
 
-**Use GitHub Codespaces**
+```bash
+npm run build
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This will create a production build in the `dist` directory.
 
-## What technologies are used for this project?
+## Azure Deployment Instructions
 
-This project is built with .
+### 1. Azure Static Web Apps Setup
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. In the Azure Portal, create a new Static Web App:
+   - Go to "Create a Resource"
+   - Search for "Static Web App"
+   - Click "Create"
 
-## How can I deploy this project?
+2. Fill in the basic details:
+   - **Subscription**: Select your subscription
+   - **Resource Group**: Create new or select existing
+   - **Name**: qualysops-dashboard
+   - **Hosting Plan**: Free
+   - **Region**: Select nearest region
+   - **Source**: GitHub (or your preferred source)
 
-Simply open [Lovable](https://lovable.dev/projects/27bebb3f-8792-42cc-8302-05b63adfcc88) and click on Share -> Publish.
+3. Configure the build details:
+   - **Build Preset**: Vite
+   - **App location**: /
+   - **Output location**: dist
+   - **API location**: Leave empty
 
-## I want to use a custom domain - is that possible?
+4. Complete the creation process and wait for deployment
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+### 2. Environment Configuration
+
+Create environment variables in Azure Static Web Apps:
+
+1. Navigate to your Static Web App in Azure Portal
+2. Go to Configuration → Application Settings
+3. Add necessary environment variables:
+   ```
+   VITE_API_URL=your_api_url
+   ```
+
+### 3. Custom Domain Setup (Optional)
+
+1. In Azure Portal, go to your Static Web App
+2. Navigate to Custom Domains
+3. Click "Add"
+4. Follow the DNS configuration instructions
+
+### 4. GitHub Actions Workflow
+
+The deployment workflow will be automatically created in your repository. The workflow file will be located at `.github/workflows/azure-static-web-apps.yml`
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── dashboard/
+│   │   ├── ScanTable.tsx
+│   │   └── StatCard.tsx
+│   └── layout/
+│       ├── DashboardLayout.tsx
+│       ├── Navbar.tsx
+│       └── Sidebar.tsx
+├── pages/
+│   └── Index.tsx
+└── hooks/
+    └── useTheme.tsx
+```
+
+## Security Considerations
+
+- Enable Azure AD authentication if required
+- Configure CORS policies appropriately
+- Enable HTTPS-only access
+- Implement rate limiting
+- Regular security audits and updates
+
+## Monitoring and Logging
+
+1. Enable Application Insights:
+   - Create Application Insights resource in Azure
+   - Add the instrumentation key to your app
+   - Monitor application performance and usage
+
+2. Configure Logging:
+   - Enable diagnostic logging in Azure Static Web Apps
+   - Set up log retention policies
+   - Configure alert rules for critical events
+
+## Troubleshooting
+
+Common issues and solutions:
+
+1. Build Failures:
+   - Verify Node.js version compatibility
+   - Check for missing dependencies
+   - Validate environment variables
+
+2. Deployment Issues:
+   - Review GitHub Actions logs
+   - Verify Azure credentials
+   - Check build output location
+
+3. Runtime Errors:
+   - Check browser console for errors
+   - Verify API endpoints and connectivity
+   - Review Application Insights logs
+
+## Support and Maintenance
+
+- Regular dependency updates
+- Periodic security patches
+- Performance optimization
+- Bug fixes and feature updates
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is proprietary and confidential. Unauthorized copying or distribution is prohibited.

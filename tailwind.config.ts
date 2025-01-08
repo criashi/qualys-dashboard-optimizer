@@ -25,32 +25,32 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#1a1a1a",
-          foreground: "#ffffff",
+          DEFAULT: "#FFA500", // Continental Yellow
+          foreground: "#000000", // Continental Black
         },
         secondary: {
-          DEFAULT: "#f4f5f7",
-          foreground: "#1a1a1a",
+          DEFAULT: "#CDCDCD", // Continental Silver
+          foreground: "#000000", // Continental Black
         },
         accent: {
-          DEFAULT: "#14b8a6",
-          foreground: "#ffffff",
+          DEFAULT: "#00A5DC", // Continental Light Blue
+          foreground: "#FFFFFF", // Continental White
         },
         success: {
-          DEFAULT: "#10b981",
-          foreground: "#ffffff",
+          DEFAULT: "#2DB928", // Continental Light Green
+          foreground: "#FFFFFF",
         },
         warning: {
-          DEFAULT: "#f59e0b",
-          foreground: "#ffffff",
+          DEFAULT: "#FFA500", // Continental Yellow
+          foreground: "#000000",
         },
         error: {
-          DEFAULT: "#f43f5e",
-          foreground: "#ffffff",
+          DEFAULT: "#FF2D37", // Continental Light Red
+          foreground: "#FFFFFF",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#969696", // Continental Gray 2
+          foreground: "#000000",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",

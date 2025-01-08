@@ -22,12 +22,12 @@ export const StatCard: React.FC<StatCardProps> = ({
   return (
     <div
       className={cn(
-        "bg-white p-6 rounded-xl border border-gray-200 animate-slideIn",
+        "bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 animate-slideIn",
         className
       )}
     >
       <div className="flex items-center justify-between">
-        <div className="text-gray-600">{icon}</div>
+        <div className="text-gray-600 dark:text-gray-400">{icon}</div>
         {trend && (
           <div
             className={cn(
@@ -40,8 +40,8 @@ export const StatCard: React.FC<StatCardProps> = ({
         )}
       </div>
       <div className="mt-4">
-        <h3 className="text-gray-600 text-sm font-medium">{title}</h3>
-        <p className="text-2xl font-semibold mt-1">{value}</p>
+        <h3 className="text-gray-600 dark:text-gray-400 text-sm font-medium">{title}</h3>
+        <p className="text-2xl font-semibold mt-1 dark:text-white">{value}</p>
       </div>
     </div>
   );

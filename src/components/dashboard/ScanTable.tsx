@@ -39,7 +39,7 @@ export const ScanTable: React.FC<ScanTableProps> = ({ scans, onReactivate }) => 
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 animate-slideIn">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 animate-slideIn">
       <Table>
         <TableHeader>
           <TableRow>
@@ -53,14 +53,14 @@ export const ScanTable: React.FC<ScanTableProps> = ({ scans, onReactivate }) => 
         <TableBody>
           {scans.map((scan) => (
             <TableRow key={scan.id}>
-              <TableCell className="font-medium">{scan.location}</TableCell>
+              <TableCell className="font-medium dark:text-gray-300">{scan.location}</TableCell>
               <TableCell>
                 <Badge className={getStatusColor(scan.status)}>
                   {scan.status.charAt(0).toUpperCase() + scan.status.slice(1)}
                 </Badge>
               </TableCell>
-              <TableCell>{scan.lastRun}</TableCell>
-              <TableCell>{scan.nextRun}</TableCell>
+              <TableCell className="dark:text-gray-300">{scan.lastRun}</TableCell>
+              <TableCell className="dark:text-gray-300">{scan.nextRun}</TableCell>
               <TableCell>
                 {scan.status !== "active" && (
                   <Button

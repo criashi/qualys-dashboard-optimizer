@@ -10,22 +10,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PlayCircle } from "lucide-react";
-
-interface Scan {
-  id: string;
-  location: string;
-  status: "active" | "inactive" | "failed";
-  lastRun: string;
-  nextRun: string;
-}
+import { ScanLocation } from "@/types/api";
 
 interface ScanTableProps {
-  scans: Scan[];
+  scans: ScanLocation[];
   onReactivate: (id: string) => void;
 }
 
 export const ScanTable: React.FC<ScanTableProps> = ({ scans, onReactivate }) => {
-  const getStatusColor = (status: Scan["status"]) => {
+  const getStatusColor = (status: ScanLocation["status"]) => {
     switch (status) {
       case "active":
         return "bg-success";
@@ -53,7 +46,7 @@ export const ScanTable: React.FC<ScanTableProps> = ({ scans, onReactivate }) => 
         <TableBody>
           {scans.map((scan) => (
             <TableRow key={scan.id}>
-              <TableCell className="font-medium dark:text-gray-300">{scan.location}</TableCell>
+              <TableCell className="font-medium dark:text-gray-300">{scan.name}</TableCell>
               <TableCell>
                 <Badge className={getStatusColor(scan.status)}>
                   {scan.status.charAt(0).toUpperCase() + scan.status.slice(1)}

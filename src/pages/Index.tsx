@@ -3,64 +3,56 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { ScanTable } from "@/components/dashboard/ScanTable";
 import { Activity, AlertCircle, CheckCircle2, Gauge } from "lucide-react";
-
-// Mock data with real locations
-const mockScans = [
-  {
-    id: "1",
-    location: "Allentown",
-    status: "active" as const,
-    lastRun: "2024-02-20 14:30",
-    nextRun: "2024-02-21 14:30",
-  },
-  {
-    id: "2",
-    location: "Auburn Hills North",
-    status: "active" as const,
-    lastRun: "2024-02-20 15:00",
-    nextRun: "2024-02-21 15:00",
-  },
-  {
-    id: "3",
-    location: "Las Colinas",
-    status: "inactive" as const,
-    lastRun: "2024-02-19 10:15",
-    nextRun: "2024-02-20 10:15",
-  },
-  {
-    id: "4",
-    location: "Silao Finance Center",
-    status: "failed" as const,
-    lastRun: "2024-02-20 03:45",
-    nextRun: "2024-02-21 03:45",
-  },
-  {
-    id: "5",
-    location: "Santa Barbara",
-    status: "active" as const,
-    lastRun: "2024-02-20 09:30",
-    nextRun: "2024-02-21 09:30",
-  },
-  {
-    id: "6",
-    location: "Guadalajara and Puebla",
-    status: "active" as const,
-    lastRun: "2024-02-20 11:45",
-    nextRun: "2024-02-21 11:45",
-  },
-];
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchDashboardStats, fetchScanLocations, reactivateScan } from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['dashboardStats'],
+    queryFn: fetchDashboardStats,
+  });
+
+  const { data: scans, isLoading: scansLoading } = useQuery({
+    queryKey: ['scanLocations'],
+    queryFn: fetchScanLocations,
+  });
+
+  const reactivateMutation = useMutation({
+    mutationFn: reactivateScan,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['scanLocations'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+      toast({
+        title: "Scan Reactivated",
+        description: "The scan has been successfully reactivated.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to reactivate scan. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleReactivate = (id: string) => {
-    console.log("Reactivating scan:", id);
-    // Implement actual reactivation logic here
+    reactivateMutation.mutate(id);
   };
 
-  // Calculate statistics
-  const totalScans = mockScans.length;
-  const activeScans = mockScans.filter((scan) => scan.status === "active").length;
-  const failedScans = mockScans.filter((scan) => scan.status === "failed").length;
-  const coverage = Math.round((activeScans / totalScans) * 100);
+  if (statsLoading || scansLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-96">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -70,32 +62,32 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             title="Active Scans"
-            value={activeScans}
+            value={stats?.activeScans || 0}
             icon={<CheckCircle2 className="w-6 h-6" />}
-            trend={{ value: 12, isPositive: true }}
+            trend={{ value: stats?.trends.activeScans || 0, isPositive: true }}
           />
           <StatCard
             title="Failed Scans"
-            value={failedScans}
+            value={stats?.failedScans || 0}
             icon={<AlertCircle className="w-6 h-6" />}
-            trend={{ value: 5, isPositive: false }}
+            trend={{ value: stats?.trends.failedScans || 0, isPositive: false }}
           />
           <StatCard
             title="Coverage"
-            value={`${coverage}%`}
+            value={`${stats?.coverage || 0}%`}
             icon={<Gauge className="w-6 h-6" />}
-            trend={{ value: 3, isPositive: true }}
+            trend={{ value: stats?.trends.coverage || 0, isPositive: true }}
           />
           <StatCard
             title="Total Scans"
-            value={totalScans}
+            value={stats?.totalScans || 0}
             icon={<Activity className="w-6 h-6" />}
           />
         </div>
 
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">Recent Scans</h3>
-          <ScanTable scans={mockScans} onReactivate={handleReactivate} />
+          {scans && <ScanTable scans={scans} onReactivate={handleReactivate} />}
         </div>
       </div>
     </DashboardLayout>

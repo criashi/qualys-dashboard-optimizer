@@ -35,3 +35,13 @@ export interface Location {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ScanDetails {
+  id: string;
+  title: string;
+  location: string;
+  status: 'running' | 'completed' | 'failed' | 'scheduled';
+  progress: number;
+  startTime: string;
+  duration: string;
+}

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Locations from "./pages/Locations";
+import ScanStatus from "./pages/ScanStatus";
 
 const queryClient = new QueryClient();
 
@@ -16,7 +17,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/scan-status" element={<Index />} />
+          <Route path="/scan-status" element={<ScanStatus />} />
           <Route path="/failed-scans" element={<Index />} />
           <Route path="/reports" element={<Index />} />
           <Route path="/settings" element={<Index />} />

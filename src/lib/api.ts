@@ -88,3 +88,36 @@ export async function createLocation(locationData: Partial<Location>): Promise<L
   }
   return response.json();
 }
+
+export async function fetchScanStatus(): Promise<ScanDetails[]> {
+  // This is a mock implementation that will be replaced with actual API calls
+  return [
+    {
+      id: "1",
+      title: "Weekly Security Scan - NA Region",
+      location: "North America HQ",
+      status: "running",
+      progress: 45,
+      startTime: "2024-03-20 08:00:00",
+      duration: "2h 15m",
+    },
+    {
+      id: "2",
+      title: "Monthly Compliance Scan - EU Region",
+      location: "European Operations",
+      status: "completed",
+      progress: 100,
+      startTime: "2024-03-19 23:00:00",
+      duration: "4h 30m",
+    },
+    {
+      id: "3",
+      title: "Critical Assets Scan - APAC",
+      location: "APAC Data Center",
+      status: "failed",
+      progress: 67,
+      startTime: "2024-03-20 02:00:00",
+      duration: "1h 45m",
+    },
+  ];
+}

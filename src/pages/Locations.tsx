@@ -7,15 +7,22 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchLocations } from "@/lib/api";
 import { LocationDialog } from "@/components/locations/LocationDialog";
 import { useToast } from "@/components/ui/use-toast";
+import { Location } from "@/types/api";
 
 const Locations = () => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [selectedLocation, setSelectedLocation] = React.useState<Location | undefined>();
   const { toast } = useToast();
 
   const { data: locations, isLoading } = useQuery({
     queryKey: ['locations'],
     queryFn: fetchLocations,
   });
+
+  const handleEdit = (location: Location) => {
+    setSelectedLocation(location);
+    setIsDialogOpen(true);
+  };
 
   if (isLoading) {
     return (
@@ -32,14 +39,24 @@ const Locations = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold">Location Management</h2>
-          <Button onClick={() => setIsDialogOpen(true)} className="space-x-2">
+          <Button onClick={() => {
+            setSelectedLocation(undefined);
+            setIsDialogOpen(true);
+          }} className="space-x-2">
             <PlusCircle className="w-4 h-4" />
             <span>Add Location</span>
           </Button>
         </div>
 
-        <LocationTable locations={locations || []} />
-        <LocationDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
+        <LocationTable 
+          locations={locations || []} 
+          onEdit={handleEdit}
+        />
+        <LocationDialog 
+          open={isDialogOpen} 
+          onOpenChange={setIsDialogOpen}
+          location={selectedLocation}
+        />
       </div>
     </DashboardLayout>
   );

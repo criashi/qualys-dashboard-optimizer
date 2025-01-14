@@ -14,7 +14,7 @@ export const SettingsLayout = () => {
     <div className="container mx-auto py-6 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Settings</h1>
+          <h1 className="text-3xl font-bold text-foreground">Settings</h1>
           <p className="text-muted-foreground">Manage your application preferences</p>
         </div>
       </div>
@@ -46,8 +46,8 @@ export const SettingsLayout = () => {
         <TabsContent value="api">
           <Card>
             <CardHeader>
-              <CardTitle>API Configuration</CardTitle>
-              <CardDescription>Configure your Qualys API settings</CardDescription>
+              <CardTitle className="text-foreground">API Configuration</CardTitle>
+              <CardDescription className="text-muted-foreground">Configure your Qualys API settings</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* API settings content will go here */}
@@ -58,8 +58,8 @@ export const SettingsLayout = () => {
         <TabsContent value="locations">
           <Card>
             <CardHeader>
-              <CardTitle>Location Settings</CardTitle>
-              <CardDescription>Manage location preferences and defaults</CardDescription>
+              <CardTitle className="text-foreground">Location Settings</CardTitle>
+              <CardDescription className="text-muted-foreground">Manage location preferences and defaults</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Location settings content will go here */}
@@ -70,8 +70,8 @@ export const SettingsLayout = () => {
         <TabsContent value="notifications">
           <Card>
             <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
-              <CardDescription>Configure alerts and notifications</CardDescription>
+              <CardTitle className="text-foreground">Notification Preferences</CardTitle>
+              <CardDescription className="text-muted-foreground">Configure alerts and notifications</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Notification settings content will go here */}
@@ -82,8 +82,8 @@ export const SettingsLayout = () => {
         <TabsContent value="users">
           <Card>
             <CardHeader>
-              <CardTitle>User Management</CardTitle>
-              <CardDescription>Manage user access and permissions</CardDescription>
+              <CardTitle className="text-foreground">User Management</CardTitle>
+              <CardDescription className="text-muted-foreground">Manage user access and permissions</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* User management content will go here */}
@@ -94,8 +94,8 @@ export const SettingsLayout = () => {
         <TabsContent value="general">
           <Card>
             <CardHeader>
-              <CardTitle>General Settings</CardTitle>
-              <CardDescription>Configure general application settings</CardDescription>
+              <CardTitle className="text-foreground">General Settings</CardTitle>
+              <CardDescription className="text-muted-foreground">Configure general application settings</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* General settings content will go here */}

@@ -15,7 +15,7 @@ export const Sidebar = () => {
   const location = useLocation();
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-4rem)]">
+    <aside className="w-64 bg-background border-r border-border min-h-[calc(100vh-4rem)]">
       <nav className="p-4 space-y-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -27,8 +27,8 @@ export const Sidebar = () => {
               to={item.path}
               className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive
-                  ? "bg-accent text-white"
-                  : "text-gray-600 hover:bg-secondary"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-foreground hover:bg-secondary"
               }`}
             >
               <Icon className="w-5 h-5" />

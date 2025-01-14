@@ -2,15 +2,69 @@
 
 A React-based dashboard application for monitoring Qualys scans across Continental Tire locations.
 
+## Architecture Overview
+
+- Frontend: React SPA hosted on Azure Static Web Apps
+- Backend: Azure Functions for Qualys API integration
+- Storage: Azure CosmosDB for location and asset group mappings
+- Security: Azure Key Vault for credential management
+
 ## Azure Infrastructure Setup
 
-### 1. Azure Resources Required
+### 1. Required Azure Resources
 
 - Azure Static Web Apps (Frontend hosting)
+- Azure Functions (Backend API)
+- Azure CosmosDB (Data storage)
 - Azure Key Vault (API credentials)
 - Azure Managed Identity (For secure credential access)
 
-### 2. Azure Key Vault Setup
+### 2. Azure Functions Setup
+
+1. Create Function App:
+```bash
+az functionapp create --name qualysops-api \
+    --resource-group your-resource-group \
+    --storage-account your-storage-account \
+    --runtime node \
+    --functions-version 4
+```
+
+2. Configure Function App settings:
+```bash
+az functionapp config appsettings set --name qualysops-api \
+    --resource-group your-resource-group \
+    --settings \
+    QUALYS_API_URL="https://qualysguard.qualys.eu/api/2.0/fo/asset/host/vm/detection/" \
+    KEY_VAULT_URL="https://qualysapicreds.vault.azure.net/" \
+    COSMOS_DB_CONNECTION="your-cosmos-connection-string"
+```
+
+### 3. CosmosDB Setup
+
+1. Create CosmosDB account:
+```bash
+az cosmosdb create --name qualysops-db \
+    --resource-group your-resource-group \
+    --locations regionName=eastus
+```
+
+2. Create database and containers:
+```bash
+az cosmosdb sql database create \
+    --account-name qualysops-db \
+    --name QualysOps \
+    --resource-group your-resource-group
+
+az cosmosdb sql container create \
+    --account-name qualysops-db \
+    --database-name QualysOps \
+    --name Locations \
+    --partition-key-path "/id" \
+    --resource-group your-resource-group
+```
+
+### 4. Azure Key Vault Setup
 
 1. Create Key Vault:
 ```bash
@@ -46,26 +100,6 @@ az keyvault set-policy --name qualysops-keyvault \
     --secret-permissions get list
 ```
 
-### 3. Qualys API Configuration
-
-1. Environment Variables:
-```bash
-az webapp config appsettings set --name qualysops-webapp \
-    --resource-group your-resource-group \
-    --settings \
-    QUALYS_API_URL="https://qualysguard.qualys.eu/api/2.0/fo/asset/host/vm/detection/" \
-    KEY_VAULT_URL="https://qualysapicreds.vault.azure.net/"
-```
-
-2. Proxy Configuration (if required):
-```bash
-az webapp config appsettings set --name qualysops-webapp \
-    --resource-group your-resource-group \
-    --settings \
-    HTTP_PROXY="http://your-proxy:port" \
-    HTTPS_PROXY="http://your-proxy:port"
-```
-
 ## Local Development
 
 1. Install dependencies:
@@ -73,21 +107,46 @@ az webapp config appsettings set --name qualysops-webapp \
 npm install
 ```
 
-2. Set up local configuration:
-Create a `local.settings.json` file:
+2. Set up Azure Functions Core Tools:
+```bash
+npm install -g azure-functions-core-tools@4
+```
+
+3. Create local.settings.json in the api folder:
 ```json
 {
   "IsEncrypted": false,
   "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
     "QUALYS_API_URL": "https://qualysguard.qualys.eu/api/2.0/fo/asset/host/vm/detection/",
-    "KEY_VAULT_URL": "https://qualysapicreds.vault.azure.net/"
+    "KEY_VAULT_URL": "https://qualysapicreds.vault.azure.net/",
+    "COSMOS_DB_CONNECTION": "your-cosmos-connection-string"
   }
 }
 ```
 
-3. Start development server:
+4. Start the development servers:
 ```bash
+# Terminal 1 - Frontend
 npm run dev
+
+# Terminal 2 - Azure Functions
+cd api
+func start
+```
+
+## Project Structure
+
+```
+qualysops/
+├── src/               # Frontend React application
+├── api/              # Azure Functions
+│   ├── getScans/     # Scan retrieval function
+│   ├── getLocations/ # Location management functions
+│   └── shared/       # Shared utilities and services
+├── types/            # Shared TypeScript types
+└── infrastructure/   # Infrastructure as Code (optional)
 ```
 
 ## Security Considerations

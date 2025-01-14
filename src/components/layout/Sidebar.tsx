@@ -1,12 +1,13 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Activity, AlertCircle, FileText, Settings } from "lucide-react";
+import { LayoutDashboard, Activity, AlertCircle, FileText, Settings, MapPin } from "lucide-react";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Activity, label: "Scan Status", path: "/scan-status" },
   { icon: AlertCircle, label: "Failed Scans", path: "/failed-scans" },
   { icon: FileText, label: "Reports", path: "/reports" },
+  { icon: MapPin, label: "Locations", path: "/locations" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
 

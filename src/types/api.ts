@@ -4,8 +4,14 @@ export interface ScanLocation {
   status: 'active' | 'inactive' | 'failed';
   lastRun: string;
   nextRun: string;
-  vulnerabilities?: number;
-  coverage?: number;
+  region?: string;
+  assetGroups: AssetGroup[];
+}
+
+export interface AssetGroup {
+  id: string;
+  name: string;
+  totalAssets: number;
 }
 
 export interface DashboardStats {
@@ -18,4 +24,14 @@ export interface DashboardStats {
     failedScans: number;
     coverage: number;
   };
+}
+
+export interface Location {
+  id: string;
+  name: string;
+  region: string;
+  assetGroups: AssetGroup[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

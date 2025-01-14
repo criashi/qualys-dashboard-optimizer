@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Locations from "./pages/Locations";
 import ScanStatus from "./pages/ScanStatus";
 import FailedScans from "./pages/FailedScans";
+import Reports from "./pages/Reports";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/scan-status" element={<ScanStatus />} />
           <Route path="/failed-scans" element={<FailedScans />} />
-          <Route path="/reports" element={<Index />} />
+          <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Index />} />
           <Route path="/locations" element={<Locations />} />
         </Routes>

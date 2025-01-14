@@ -1,21 +1,38 @@
 import { ScanLocation, DashboardStats, Location, AssetGroup } from '@/types/api';
-
-const API_BASE_URL = '/api';
+import { qualysApi } from '@/services/qualysApi';
 
 export async function fetchDashboardStats(): Promise<DashboardStats> {
-  const response = await fetch(`${API_BASE_URL}/dashboard/stats`);
-  if (!response.ok) {
+  try {
+    const detections = await qualysApi.getHostDetections();
+    // Transform Qualys API response to DashboardStats format
+    // This is a placeholder transformation - adjust based on actual API response
+    return {
+      activeScans: 0,
+      failedScans: 0,
+      totalScans: 0,
+      coverage: 0,
+      trends: {
+        activeScans: 0,
+        failedScans: 0,
+        coverage: 0
+      }
+    };
+  } catch (error) {
+    console.error('Failed to fetch dashboard statistics:', error);
     throw new Error('Failed to fetch dashboard statistics');
   }
-  return response.json();
 }
 
 export async function fetchScanLocations(): Promise<ScanLocation[]> {
-  const response = await fetch(`${API_BASE_URL}/scans`);
-  if (!response.ok) {
+  try {
+    const assetGroups = await qualysApi.getAssetGroups();
+    // Transform Qualys API response to ScanLocation format
+    // This is a placeholder transformation - adjust based on actual API response
+    return [];
+  } catch (error) {
+    console.error('Failed to fetch scan locations:', error);
     throw new Error('Failed to fetch scan locations');
   }
-  return response.json();
 }
 
 export async function fetchLocations(): Promise<Location[]> {

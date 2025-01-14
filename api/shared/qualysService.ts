@@ -50,6 +50,45 @@ class QualysService {
 
     return response.data;
   }
+
+  public async getReports() {
+    const credentials = await this.getCredentials();
+    const auth = Buffer.from(`${credentials.username}:${credentials.password}`).toString('base64');
+
+    const response = await axios.get(`${process.env.QUALYS_API_URL}/report/`, {
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'X-Requested-With': 'QualysOps Dashboard',
+      },
+      proxy: process.env.HTTP_PROXY ? {
+        host: process.env.HTTP_PROXY,
+        port: 8080,
+      } : undefined,
+    });
+
+    return response.data;
+  }
+
+  public async generateReport(templateId: string, options: any) {
+    const credentials = await this.getCredentials();
+    const auth = Buffer.from(`${credentials.username}:${credentials.password}`).toString('base64');
+
+    const response = await axios.post(`${process.env.QUALYS_API_URL}/report/generate`, {
+      templateId,
+      ...options
+    }, {
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'X-Requested-With': 'QualysOps Dashboard',
+      },
+      proxy: process.env.HTTP_PROXY ? {
+        host: process.env.HTTP_PROXY,
+        port: 8080,
+      } : undefined,
+    });
+
+    return response.data;
+  }
 }
 
 export const qualysService = QualysService.getInstance();

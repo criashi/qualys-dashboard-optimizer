@@ -45,3 +45,13 @@ export interface ScanDetails {
   startTime: string;
   duration: string;
 }
+
+export interface QualysReport {
+  id: string;
+  location: string;
+  scanDate: string;
+  type: string;
+  findings: number;
+  status: string;
+  downloadUrl?: string;
+}

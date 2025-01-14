@@ -12,6 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Eye, Pause, Play, AlertTriangle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScanDetails } from "@/types/api";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ScanStatusTableProps {
   scans: ScanDetails[];
@@ -22,9 +29,24 @@ export const ScanStatusTable: React.FC<ScanStatusTableProps> = ({
   scans,
   isLoading,
 }) => {
+  const { toast } = useToast();
+  const [selectedScan, setSelectedScan] = React.useState<ScanDetails | null>(null);
+
   if (isLoading) {
     return <LoadingSkeleton />;
   }
+
+  const handlePauseScan = (scanId: string) => {
+    toast({
+      title: "Scan Paused",
+      description: "The scan has been paused successfully.",
+    });
+    console.log("Pausing scan:", scanId);
+  };
+
+  const handleViewDetails = (scan: ScanDetails) => {
+    setSelectedScan(scan);
+  };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { color: string; icon: React.ReactNode }> = {
@@ -48,45 +70,93 @@ export const ScanStatusTable: React.FC<ScanStatusTableProps> = ({
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Scan Title</TableHead>
-            <TableHead>Location</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Progress</TableHead>
-            <TableHead>Start Time</TableHead>
-            <TableHead>Duration</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {scans.map((scan) => (
-            <TableRow key={scan.id}>
-              <TableCell className="font-medium">{scan.title}</TableCell>
-              <TableCell>{scan.location}</TableCell>
-              <TableCell>{getStatusBadge(scan.status)}</TableCell>
-              <TableCell>{scan.progress}%</TableCell>
-              <TableCell>{scan.startTime}</TableCell>
-              <TableCell>{scan.duration}</TableCell>
-              <TableCell>
-                <div className="flex space-x-2">
-                  <Button variant="ghost" size="sm">
-                    <Eye className="w-4 h-4" />
-                  </Button>
-                  {scan.status === "running" && (
-                    <Button variant="ghost" size="sm">
-                      <Pause className="w-4 h-4" />
-                    </Button>
-                  )}
-                </div>
-              </TableCell>
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Scan Title</TableHead>
+              <TableHead>Location</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Progress</TableHead>
+              <TableHead>Start Time</TableHead>
+              <TableHead>Duration</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {scans.map((scan) => (
+              <TableRow key={scan.id}>
+                <TableCell className="font-medium">{scan.title}</TableCell>
+                <TableCell>{scan.location}</TableCell>
+                <TableCell>{getStatusBadge(scan.status)}</TableCell>
+                <TableCell>{scan.progress}%</TableCell>
+                <TableCell>{scan.startTime}</TableCell>
+                <TableCell>{scan.duration}</TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleViewDetails(scan)}
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    {scan.status === "running" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handlePauseScan(scan.id)}
+                      >
+                        <Pause className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Dialog open={!!selectedScan} onOpenChange={() => setSelectedScan(null)}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Scan Details</DialogTitle>
+          </DialogHeader>
+          {selectedScan && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <span className="font-medium">Title:</span>
+                <span className="col-span-3">{selectedScan.title}</span>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <span className="font-medium">Location:</span>
+                <span className="col-span-3">{selectedScan.location}</span>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <span className="font-medium">Status:</span>
+                <span className="col-span-3">
+                  {getStatusBadge(selectedScan.status)}
+                </span>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <span className="font-medium">Progress:</span>
+                <span className="col-span-3">{selectedScan.progress}%</span>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <span className="font-medium">Start Time:</span>
+                <span className="col-span-3">{selectedScan.startTime}</span>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <span className="font-medium">Duration:</span>
+                <span className="col-span-3">{selectedScan.duration}</span>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

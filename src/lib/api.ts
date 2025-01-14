@@ -1,6 +1,8 @@
 import { ScanLocation, DashboardStats, Location, AssetGroup } from '@/types/api';
 import { qualysApi } from '@/services/qualysApi';
 
+const API_BASE_URL = process.env.QUALYS_API_URL || 'https://qualysguard.qualys.eu/api/2.0/fo/asset/host/vm/detection/';
+
 export async function fetchDashboardStats(): Promise<DashboardStats> {
   try {
     const detections = await qualysApi.getHostDetections();

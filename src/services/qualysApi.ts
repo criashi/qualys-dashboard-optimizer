@@ -1,6 +1,4 @@
-import { ScanLocation, DashboardStats } from '@/types/api';
-
-const QUALYS_API_BASE = process.env.QUALYS_API_URL || 'https://qualysguard.qualys.eu/api/2.0/fo/asset/host/vm/detection/';
+const QUALYS_API_BASE = import.meta.env.VITE_QUALYS_API_URL || 'https://qualysguard.qualys.eu/api/2.0/fo/asset/host/vm/detection/';
 
 interface QualysApiConfig {
   username: string;

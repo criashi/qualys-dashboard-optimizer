@@ -1,0 +1,131 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - '**/*.md'
+      - 'docs/*'
+
+pr:
+  branches:
+    include:
+      - main
+
+variables:
+  - group: qualysops-variables # Create this variable group in Azure DevOps
+  - name: nodeVersion
+    value: '18.x'
+  - name: isProduction
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: BuildJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(nodeVersion)
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm ci
+      displayName: 'Install Dependencies'
+
+    - script: |
+        npm run lint
+      displayName: 'Run ESLint'
+
+    - script: |
+        npm run test
+      displayName: 'Run Tests'
+      
+    - script: |
+        npm run build
+      displayName: 'Build Application'
+      env:
+        NODE_ENV: production
+
+    - task: CopyFiles@2
+      inputs:
+        Contents: |
+          dist/**
+          api/**
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      displayName: 'Copy Build Output'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+      displayName: 'Publish Build Artifacts'
+
+- stage: Deploy_Dev
+  displayName: 'Deploy to Development'
+  dependsOn: Build
+  condition: succeeded()
+  variables:
+    - group: qualysops-dev
+  jobs:
+  - deployment: DeployDev
+    environment: development
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureKeyVault@2
+            inputs:
+              azureSubscription: 'QualysOps-Dev-ServiceConnection'
+              KeyVaultName: '$(keyVaultName)'
+              SecretsFilter: 'QualysApiUsername,QualysApiPassword'
+            displayName: 'Get Key Vault Secrets'
+
+          - task: AzureStaticWebApp@0
+            inputs:
+              azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APP_TOKEN)
+              app_location: 'dist'
+              api_location: 'api'
+              output_location: ''
+            displayName: 'Deploy to Azure Static Web Apps'
+            env:
+              QUALYS_API_USERNAME: $(QualysApiUsername)
+              QUALYS_API_PASSWORD: $(QualysApiPassword)
+
+- stage: Deploy_Prod
+  displayName: 'Deploy to Production'
+  dependsOn: Deploy_Dev
+  condition: and(succeeded(), eq(variables.isProduction, true))
+  variables:
+    - group: qualysops-prod
+  jobs:
+  - deployment: DeployProd
+    environment: production
+    pool:
+      vmImage: 'ubuntu-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureKeyVault@2
+            inputs:
+              azureSubscription: 'QualysOps-Prod-ServiceConnection'
+              KeyVaultName: '$(keyVaultName)-prod'
+              SecretsFilter: 'QualysApiUsername,QualysApiPassword'
+            displayName: 'Get Production Key Vault Secrets'
+
+          - task: AzureStaticWebApp@0
+            inputs:
+              azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APP_PROD_TOKEN)
+              app_location: 'dist'
+              api_location: 'api'
+              output_location: ''
+            displayName: 'Deploy to Azure Static Web Apps (Production)'
+            env:
+              QUALYS_API_USERNAME: $(QualysApiUsername)
+              QUALYS_API_PASSWORD: $(QualysApiPassword)
